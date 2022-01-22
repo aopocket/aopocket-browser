@@ -10,6 +10,7 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
+    title: 'AO Pocket',
     width: 350,
     height: 600,
     webPreferences: {
