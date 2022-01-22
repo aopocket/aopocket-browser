@@ -1,10 +1,79 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, Menu } = require('electron');
 const path = require('path');
+
+const isMac = process.platform === 'darwin';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   // eslint-disable-line global-require
   app.quit();
+}
+
+const buildMenuItems = () => {
+  const template = [
+    // { role: 'appMenu' }
+    ...(isMac ? [{
+      label: app.name,
+      submenu: [
+        { role: 'about' },
+        { type: 'separator' },
+        { role: 'services' },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    }] : []),
+    {
+      label: '&File',
+      role: 'fileMenu'
+    },
+    {
+      label: '&Edit',
+      role: 'editMenu'
+    },
+    {
+      label: '&View',
+      submenu: [
+        {
+          type: 'checkbox',
+          label: 'Always on Top',
+          click: async () => {
+            const win = BrowserWindow.getFocusedWindow();
+            win.setAlwaysOnTop(!win.isAlwaysOnTop());
+          }
+        },
+        { type: 'separator' },
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' }
+      ]
+    },
+    {
+      label: '&Help',
+      role: 'help',
+      submenu: [
+        {
+          label: 'Learn More',
+          click: async () => {
+            const { shell } = require('electron');
+            await shell.openExternal('https://aopocket.com');
+          }
+        }
+      ]
+    }
+  ];
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu);
 }
 
 const createWindow = () => {
@@ -30,6 +99,8 @@ const createWindow = () => {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
+
+  buildMenuItems();
 };
 
 // This method will be called when Electron has finished
