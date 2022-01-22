@@ -13,6 +13,8 @@ const createWindow = () => {
     title: 'AO Pocket',
     width: 350,
     height: 600,
+    backgroundColor: '#111827',
+    show: false,
     webPreferences: {
       contextIsolation: true,
       webviewTag: true,
@@ -23,7 +25,11 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
 };
 
 // This method will be called when Electron has finished
